@@ -44,7 +44,7 @@
   </script>
 
 
-  <title> SVM之SMO算法笔记（之一） // 知耻而后勇 </title>
+  <title> SVM之SMO算法笔记（之一） // foreyou's notes </title>
 </head>
 
 <body>
@@ -60,7 +60,7 @@
       <span class="logo">
         <i class="icon-logo"></i>
       </span>
-      <span class="site-title">知耻而后勇</span>
+      <span class="site-title">foreyou's notes</span>
   </a>
   <span class="logo-line-after"><i></i></span>
 </h1>
@@ -167,11 +167,11 @@
       
 
       
-        <p>参考《支持向量机通俗导论》<br>关于SVM的原理和理论推导可以查阅July的博客<a href="http://blog.csdn.net/v_july_v/article/details/7624837" target="_blank" rel="external">《支持向量机同属导论》</a>。这篇博客关注SVM的实现。</p>
+        <p>参考《支持向量机通俗导论》<br>关于SVM的原理和理论推导可以查阅July的博客<a href="http://blog.csdn.net/v_july_v/article/details/7624837" target="_blank" rel="external">《支持向量机同属导论》</a>。这篇博客关注SVM的实现。<br><a id="more"></a></p>
 <h3 id="SMO算法">SMO算法</h3><p>　首先，SVM的模型求解的问题是去寻找一个最优分类面：<br>$$f(x)=w^Tx-b. \tag{1}\label{eq:1}$$<br>　SVM的最优化目标等价于：<br>$$<br>        \begin{array}{l}<br>       \min_{w,b} \frac12||w||^2  \\<br>        s.t. y_i(w^Tx_i-b)\ge 1, i = 1,2,…,n \\<br>        \end{array}.\tag{2}<br>$$<br>　可以应用Largrange对偶性，通过求解对偶问题得到最优解。引入Largrange乘数乘子$\alpha$，将约束项融合到目标函数中去：<br>$$L(w,b,\alpha)=\frac{1}{2}||w||^2-\sum_{i=1}^{n}{\alpha_i(y_i(w^Tx_i-b)-1)}. \tag{3}$$<br>　固定$\alpha$，可以求得参数：</p>
-<p><center><br>$\frac{\partial L}{\partial w} = 0 \Rightarrow  w=\sum_{i=1}^{n}y_i\alpha_i x_i \tag{4}\label{eq:4},$<br>$\frac{\partial L}{\partial b} = 0 \Rightarrow \sum_{i=1}^{n} \alpha_i yi = 0, \tag{5}$<br>$b = w^Tx_i - y_i ( \alpha_i &gt; 0 ). \tag{6}$</center><br>将公式$\eqref{eq:4}$代入公式$\eqref{eq:1}$可以得到：<br>$$f(x)=\sum_{i=1}^{n}{y_i\alpha_i \kappa(x_i,x)} -b. \tag{7}$$<br>所以，支持向量机的所有参数$\Theta=\{\alpha_i,b | i = 1,2,…,n\}$.</p>
+<p><center><br>$\frac{\partial L}{\partial w} = 0 \Rightarrow  w=\sum_{i=1}^{n}y_i\alpha_i x_i \tag{4}\label{eq:4},$<br>$\frac{\partial L}{\partial b} = 0 \Rightarrow \sum_{i=1}^{n} \alpha_i y_i = 0, \tag{5}$<br>$b = w^Tx_i - y_i ( \alpha_i &gt; 0 ). \tag{6}$</center><br>将公式$\eqref{eq:4}$代入公式$\eqref{eq:1}$可以得到：<br>$$f(x)=\sum_{i=1}^{n}{y_i\alpha_i \langle x_i,x \rangle} -b. \tag{7}$$<br>这里$\langle x_i,x \rangle$表示$x_i$和$x$之间的点积,也就是线性核函数。可以对核函数进行扩展，使用$\kappa(x_i,x)$表示。<br>$$f(x)=\sum_{i=1}^{n}{y_i\alpha_i \kappa(x_i,x)} -b. \tag{8}$$<br>所以，支持向量机的所有参数$\Theta=\{\alpha_i,b | i = 1,2,…,n\}$.</p>
 <h4 id="引入松弛变量之后的SVM">引入松弛变量之后的SVM</h4><p>QP问题为：</p>
-<p>$$<br>\begin{array}{l}<br>    \min_{w,b}=\frac{1}{2}||w||^2+C\sum_{i=1}^{n}{\xi_i} \\<br>    s.t. y_i(w^Tx_i - b)&gt;1-\xi_i, i = 1,2,…,n\\<br>\end{array}. \tag{8}$$<br>最终的优化目标为：<br>$$\min_{w,b}=\frac{1}{2}\sum_{i=1}^{n}{\sum_{j=1}^{n}{\alpha_i\alpha_j y_i y_j \kappa(x_i,x_j)}}-\sum_{i=1}^{n}{\alpha_i}. \tag{9}$$<br>$$s.t. 0 \le \alpha_i \le C, i = 1,2,…,n \\ \sum_{i=1}^{n}{\alpha_i y_i}=0$$</p>
+<p>$$<br>\begin{array}{l}<br>    \min_{w,b}=\frac{1}{2}||w||^2+C\sum_{i=1}^{n}{\xi_i} \\<br>    s.t. y_i(w^Tx_i - b)&gt;1-\xi_i, i = 1,2,…,n\\<br>\end{array}. \tag{9}$$<br>最终的优化目标为：<br>$$\min_{w,b}=\frac{1}{2}\sum_{i=1}^{n}{\sum_{j=1}^{n}{\alpha_i\alpha_j y_i y_j \kappa(x_i,x_j)}}-\sum_{i=1}^{n}{\alpha_i}. \tag{10}$$<br>$$s.t. 0 \le \alpha_i \le C, i = 1,2,…,n \\ \sum_{i=1}^{n}{\alpha_i y_i}=0$$</p>
 <h4 id="KKT条件">KKT条件</h4><ul>
 <li>最优解需要满足KKT条件，KKT条件：<br>$$<br>\begin{array}{ccc}<br>  \alpha_i = 0 &amp;\Leftrightarrow &amp;y_if(x_i) \ge 1 \\<br>   0 &lt; \alpha_i &lt;C &amp;\Leftrightarrow&amp; y_if(x_i) = 1 \\<br>   \alpha_i = C &amp;\Leftrightarrow &amp;y_if(x_i) \le 1\\<br>\end{array}$$</li>
 <li>当出现如下情况时违背了KKT条件：</li>
@@ -182,7 +182,7 @@
 </ol>
 <p>所以SMO算法的思想就是找出不满足KKT条件的$\alpha_i$，并更新这些$\alpha_i$。</p>
 <h4 id="$\alpha$受到的约束条件">$\alpha$受到的约束条件</h4><p>除了更新不满足KKT条件的$\alpha_i$，所有$\alpha$还要受到约束：$\sum_{i=1}^{n}{\alpha_i y_i} = 0$。<br>为此SMO同时更新两个参数，假设这两个参数分别为$\alpha_i,\alpha_j$，并使得$\alpha_i^{new},\alpha_j^{new}$满足：</p>
-<p><center>$y_i\alpha_i^{new}+y_j\alpha_j^{new}=y_i\alpha_i^{old}+y_j\alpha_j^{old}=\gamma$</center><br>再考虑$0 \le \alpha\le C$，$\alpha_i,\alpha_j$的取值范围如下图所示（图中正方形内部线段的取值范围）：</p>
+<p><center>$y_i\alpha_i^{new}+y_j\alpha_j^{new}=y_i\alpha_i^{old}+y_j\alpha_j^{old}=\gamma$</center><br>再考虑$0 \le \alpha\le C$，$\alpha_i,\alpha_j$的取值范围如下图所示（图中正方形内部线段的取值范围）：<br><img src="http://7xjj3m.com1.z0.glb.clouddn.com/20150527_SVM_SMO.jpg" alt="img"></p>
 <p>根据上图，可以得到$\alpha_j$的取值上下限如下：<br>$L=max(0,\alpha_j^{old}-\alpha_i^{old}), H=min(C,C+\alpha_j^{old} - \alpha_i^{old}), y_j \ne y_i$<br>$L=max(0,\alpha_j^{old}+\alpha_i^{old}-C), H=min(C,\alpha_j^{old} + \alpha_i^{old}), y_j = y_i $</p>
 <h4 id="更新$\alpha$">更新$\alpha$</h4><p>每次更新的时候总有：<br>$$\alpha_{j}^{new} = \alpha_j^{old} - \frac{y_j(E_i-E_j)}{\eta}$$<br>$$\alpha_{j}^{new,clipped} = \left\{<br>\begin{array}{cc}<br>H,&amp;\alpha_i^{new} \ge H\\<br>\alpha_i^{new}, &amp; L&lt; \alpha_i^{new} &lt;H\\<br>L, &amp;\alpha_i^{new} \le L \end{array}<br>\right.$$<br>$$\alpha_{i}^{new} = \alpha_i^{old} + y_iy_j(\alpha_j^{old} - \alpha_j^{new,clipped})$$<br>其中$E_i$和$E_j$表示error( $E=f(x) - y$)<br>$$\eta = 2\kappa(x_i,x_j) - \kappa(x_i,x_i) - \kappa(x_j,x_j)$$</p>
 <h4 id="更新模型参数">更新模型参数</h4><p>每次更新完$\alpha_i,\alpha_j$都要重新计算模型参数$b$，以及$E$.</p>
@@ -269,8 +269,8 @@
 
       <div class="site-overview">
         <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/avatar.jpg" alt="fortianyou" />
-          <p class="site-author-name">fortianyou</p>
+          <img class="site-author-image" src="/images/avatar.jpg" alt="foreyou" />
+          <p class="site-author-name">foreyou</p>
         </div>
         <p class="site-description motion-element">不积跬步无以至千里，不积小流无以成江海</p>
         <div class="site-state motion-element">
@@ -352,7 +352,7 @@
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>
-  <span class="author">fortianyou</span>
+  <span class="author">foreyou</span>
 </div>
 
 <div class="powered-by">

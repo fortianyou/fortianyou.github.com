@@ -44,7 +44,7 @@
   </script>
 
 
-  <title> 如何做Gibbs采样(how to do gibbs-sampling) // 知耻而后勇 </title>
+  <title> 如何做Gibbs采样(how to do gibbs-sampling) // foreyou's notes </title>
 </head>
 
 <body>
@@ -60,7 +60,7 @@
       <span class="logo">
         <i class="icon-logo"></i>
       </span>
-      <span class="site-title">知耻而后勇</span>
+      <span class="site-title">foreyou's notes</span>
   </a>
   <span class="logo-line-after"><i></i></span>
 </h1>
@@ -167,7 +167,7 @@
       
 
       
-        <h3 id="随机模拟">随机模拟</h3><p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。<br>　　随机模拟的一个重要问题就是给定一个概率分布$p(x)$，如何生成它的样本。均匀分布$Uniform(0,1)$的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于$Uniform(0,1)$的样本经过变换生成。<br>　　然而，当概率分布$p(x)$的形式很复杂或者$p(x)$是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。</p>
+        <h3 id="随机模拟">随机模拟</h3><p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。<br>　　随机模拟的一个重要问题就是给定一个概率分布$p(x)$，如何生成它的样本。均匀分布$Uniform(0,1)$的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于$Uniform(0,1)$的样本经过变换生成。<br>　　然而，当概率分布$p(x)$的形式很复杂或者$p(x)$是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。<br><a id="more"></a></p>
 <h4 id="马尔科夫链及其平稳分布">马尔科夫链及其平稳分布</h4><p>马尔科夫链的数学定义如下：<br>$$P(X_{t+1}=x| X_t, X_{t-1},…) = P(X_{t+1}| X_t)$$<br>_定理_ 如果一个非周期马尔科夫链具有转移概率矩阵$P$，且它的任何两个状态是连通的，那么</p>
 <ol>
 <li>$\lim_{n\rightarrow \infty}{P^n}=<br>\left[<br>\begin{array}{ccccc}<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>…&amp;…&amp;…&amp;…&amp;…\\<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>…&amp;…&amp;…&amp;…&amp;…\\<br>\end{array}<br>\right].<br>$</li>
@@ -296,8 +296,8 @@
 
       <div class="site-overview">
         <div class="site-author motion-element">
-          <img class="site-author-image" src="/images/avatar.jpg" alt="fortianyou" />
-          <p class="site-author-name">fortianyou</p>
+          <img class="site-author-image" src="/images/avatar.jpg" alt="foreyou" />
+          <p class="site-author-name">foreyou</p>
         </div>
         <p class="site-description motion-element">不积跬步无以至千里，不积小流无以成江海</p>
         <div class="site-state motion-element">
@@ -379,7 +379,7 @@
   <span class="with-love">
     <i class="icon-heart"></i>
   </span>
-  <span class="author">fortianyou</span>
+  <span class="author">foreyou</span>
 </div>
 
 <div class="powered-by">
