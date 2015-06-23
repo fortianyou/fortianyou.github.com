@@ -167,51 +167,95 @@
       
 
       
-        <h3 id="随机模拟">随机模拟</h3><p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。<br>　　随机模拟的一个重要问题就是给定一个概率分布$p(x)$，如何生成它的样本。均匀分布$Uniform(0,1)$的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于$Uniform(0,1)$的样本经过变换生成。<br>　　然而，当概率分布$p(x)$的形式很复杂或者$p(x)$是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。<br><a id="more"></a></p>
-<h4 id="马尔科夫链及其平稳分布">马尔科夫链及其平稳分布</h4><p>马尔科夫链的数学定义如下：<br>$$P(X_{t+1}=x| X_t, X_{t-1},…) = P(X_{t+1}| X_t)$$<br>_定理_ 如果一个非周期马尔科夫链具有转移概率矩阵$P$，且它的任何两个状态是连通的，那么</p>
-<ol>
-<li>$\lim_{n\rightarrow \infty}{P^n}=<br>\left[<br>\begin{array}{ccccc}<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>…&amp;…&amp;…&amp;…&amp;…\\<br>\pi(1) &amp; \pi(2) &amp;…&amp;\pi(j)&amp;…\\<br>…&amp;…&amp;…&amp;…&amp;…\\<br>\end{array}<br>\right].<br>$</li>
-<li>$\pi(j)=\sum_{i=0}^{\infty}{\pi(i)P_{ij}}$.</li>
-<li>$\pi$是方程$\pi P=\pi$的唯一非负解，其中$\pi =[\pi(1), \pi(2), …, \pi(j), …], \sum_{i=0}^{\infty}{\pi_i} = 1.$<br>$\pi$称为马尔科夫链的平稳分布。</li>
+        <h3 id="随机模拟">随机模拟</h3>
+<p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。</p>
+<p>　　随机模拟的一个重要问题就是给定一个概率分布<span class="math inline">\(p(x)\)</span>，如何生成它的样本。均匀分布<span class="math inline">\(Uniform(0,1)\)</span>的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于<span class="math inline">\(Uniform(0,1)\)</span>的样本经过变换生成。</p>
+<p>　　然而，当概率分布<span class="math inline">\(p(x)\)</span>的形式很复杂或者<span class="math inline">\(p(x)\)</span>是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。</p>
+<a id="more"></a>
+<h4 id="马尔科夫链及其平稳分布">马尔科夫链及其平稳分布</h4>
+<p>马尔科夫链的数学定义如下： <span class="math display">\[P(X_{t+1}=x| X_t, X_{t-1},...) = P(X_{t+1}| X_t)\]</span> <em>定理</em> 如果一个非周期马尔科夫链具有转移概率矩阵<span class="math inline">\(P\)</span>，且它的任何两个状态是连通的，那么</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\lim_{n \rightarrow \infty}{P^n}= \left[ \begin{array}{ccccc} \pi(1) &amp; \pi(2) &amp;...&amp;\pi(j)&amp;...\\ \pi(1) &amp; \pi(2) &amp;...&amp;\pi(j)&amp;...\\ ...&amp;...&amp;...&amp;...&amp;...\\ \pi(1) &amp; \pi(2) &amp;...&amp;\pi(j)&amp;...\\ ...&amp;...&amp;...&amp;...&amp;...\\ \end{array} \right].\)</span></li>
+<li><span class="math inline">\(\pi(j)=\sum_{i=0}^{\infty}{\pi(i)P_{ij}}\)</span>.</li>
+<li><span class="math inline">\(\pi\)</span>是方程<span class="math inline">\(\pi P=\pi\)</span>的唯一非负解，其中<span class="math inline">\(\pi =[\pi(1), \pi(2), ..., \pi(j), ...], \sum_{i=0}^{\infty}{\pi_i} = 1.\)</span> <span class="math inline">\(\pi\)</span>称为马尔科夫链的平稳分布。</li>
 </ol>
-<h5 id="_收敛到平稳分布_">_收敛到平稳分布_</h5><p>从初始概率分布$\pi_0$出发，我们在马尔科夫链上做状态转移，记$X_i$的概率分布为$\pi_i$，则有<br>$$\begin{array}{cc}<br>X_0\sim \pi_0(x)&amp; \\<br>X_i\sim \pi_i(x),&amp; \pi_i(x) = \pi_{i-1}(x)P=\pi_0(x)P^i<br>\end{array}<br>$$<br>由马尔科夫链收敛的定理，概率分布$\pi_i(x)$将收敛到平稳分布$\pi(x)$。假设到第$n$步的时候马尔科夫链收敛，则有<br>$$<br>\begin{array}{l}<br>X_0 \sim \pi_0(x)\\<br>X_1\sim \pi_1(x)\\<br>…\\<br>X_n\sim \pi_n(x) = \pi(x)\\<br>X_{n+1}\sim \pi(x)\\<br>X_{n+2}\sim \pi(x)\\<br>…<br>\end{array}<br>$$</p>
-<p>所以$X_n,X_{n+1},X_{n+2},…\sim \pi(x)$都是属于同分布的随机变量，当然他们并不是独立的。如果从$x_0$开始沿着马尔科夫链按照概率转移矩阵跳转，那么我们将会得到一个转移序列$\{x_0,x_1,…,x_n,x_{n+1},…\}$，由于马尔科夫链具有收敛性，所以$\{x_{n},x_{n+1},…\}$都是平稳分布$\pi(x)$的样本。</p>
-<h5 id="_MCMC_">_MCMC_</h5><p>_定理(细致平稳条件)_ 如果非周期马尔科夫链的转移矩阵P和分布$\pi(x)$满足<br>$$\pi(i)P_{ij}=\pi(j)P_{ji}, ~for~all~ i,j$$<br>则$\pi(x)$是马尔科夫链的平稳分布，上式被称为细致平稳条件。<br>假设我们已经有了一个转移矩阵为$Q$的马尔科夫链($q(i\rightarrow j)$ 表示从状态$i$转移到状态$j$的概率)，$p(x)$表示当前的概率分布$\pi$，显然通常情况下：<br>$$p(i)q(i\rightarrow j) \ne p(j)q(j\rightarrow i)$$<br>也就是细致平稳条件不成立，所以$p(x)$不太可能是马尔科夫链的平稳分布。为了能够对$p(x)$进行抽样，我们必须对马尔科夫链进行改造，使得细致平稳条件成立。比如，引入一个接受率$\alpha(i,j)$使得<br>$$p(i)q(i\rightarrow j)\alpha(i,j) = p(j)q(j\rightarrow i)\alpha(j,i)$$<br>最简单的按照对称性，我们可以取如下$\alpha(i,j),\alpha(j,i)$使得上式成立<br>$$\alpha(i,j)=p(j)q(j\rightarrow i), ~ \alpha(j,i)=p(i)q(i\rightarrow j)$$</p>
-<p>我们可以理解这个改造过程为在原来的马尔科夫链上，从状态$i$以概率$q(i\rightarrow j)$转移到状态$j$时，以概率$\alpha(i,j)$接受这个转移。所以新的马尔科夫链$Q^\prime$的转移概率为$q(i\rightarrow j)\alpha(i,j)$。<br><img src="http://7xjj3m.com1.z0.glb.clouddn.com/20150607_MCMC_1.png" alt="img"></p>
-<p>上面的改造还有一个小小的问题：马尔科夫链的接受率$\alpha(i,j)$在转移过程中可能会偏小，如果这样子采样过程中马尔科夫链容易原地踏步，拒绝大量跳转，致使收敛速度太慢。为了提高采样的接受率，我们可以对接受率进行细微的修改：$$\alpha(i,j)=\min \left \{ \frac{p(j)q(j\rightarrow i) }{p(i)q(i\rightarrow j )}, 1 \right \}.$$</p>
+<h5 id="收敛到平稳分布"><em>收敛到平稳分布</em></h5>
+<p>从初始概率分布<span class="math inline">\(\pi_0\)</span>出发，我们在马尔科夫链上做状态转移，记<span class="math inline">\(X_i\)</span>的概率分布为<span class="math inline">\(\pi_i\)</span>，则有 <span class="math display">\[\begin{array}{cc}
+X_0\sim \pi_0(x)&amp; \\
+X_i\sim \pi_i(x),&amp; \pi_i(x) = \pi_{i-1}(x)P=\pi_0(x)P^i
+\end{array}
+\]</span> 由马尔科夫链收敛的定理，概率分布<span class="math inline">\(\pi_i(x)\)</span>将收敛到平稳分布<span class="math inline">\(\pi(x)\)</span>。假设到第<span class="math inline">\(n\)</span>步的时候马尔科夫链收敛，则有 <span class="math display">\[
+\begin{array}{l}
+X_0 \sim \pi_0(x)\\
+X_1\sim \pi_1(x)\\
+...\\
+X_n\sim \pi_n(x) = \pi(x)\\
+X_{n+1}\sim \pi(x)\\
+X_{n+2}\sim \pi(x)\\
+...
+\end{array}
+\]</span></p>
+<p>所以<span class="math inline">\(X_n,X_{n+1},X_{n+2},...\sim \pi(x)\)</span>都是属于同分布的随机变量，当然他们并不是独立的。如果从<span class="math inline">\(x_0\)</span>开始沿着马尔科夫链按照概率转移矩阵跳转，那么我们将会得到一个转移序列<span class="math inline">\(\{x_0,x_1,...,x_n,x_{n+1},...\}\)</span>，由于马尔科夫链具有收敛性，所以<span class="math inline">\(\{x_{n},x_{n+1},...\}\)</span>都是平稳分布<span class="math inline">\(\pi(x)\)</span>的样本。</p>
+<h5 id="mcmc"><em>MCMC</em></h5>
+<p><em>定理(细致平稳条件)</em> 如果非周期马尔科夫链的转移矩阵P和分布<span class="math inline">\(\pi(x)\)</span>满足 <span class="math display">\[\pi(i)P_{ij}=\pi(j)P_{ji}, ~for~all~ i,j\]</span></p>
+<p>则<span class="math inline">\(\pi(x)\)</span>是马尔科夫链的平稳分布，上式被称为细致平稳条件。</p>
+<p>假设我们已经有了一个转移矩阵为<span class="math inline">\(Q\)</span>的马尔科夫链(<span class="math inline">\(q(i\rightarrow j)\)</span> 表示从状态<span class="math inline">\(i\)</span>转移到状态<span class="math inline">\(j\)</span>的概率)，<span class="math inline">\(p(x)\)</span>表示当前的概率分布<span class="math inline">\(\pi\)</span>，显然通常情况下：</p>
+<p><span class="math display">\[p(i)q(i\rightarrow j) \ne p(j)q(j\rightarrow i)\]</span></p>
+<p>也就是细致平稳条件不成立，所以<span class="math inline">\(p(x)\)</span>不太可能是马尔科夫链的平稳分布。为了能够对<span class="math inline">\(p(x)\)</span>进行抽样，我们必须对马尔科夫链进行改造，使得细致平稳条件成立。比如，引入一个接受率<span class="math inline">\(\alpha(i,j)\)</span>使得</p>
+<p><span class="math display">\[p(i)q(i\rightarrow j)\alpha(i,j) = p(j)q(j\rightarrow i)\alpha(j,i)\]</span></p>
+<p>最简单的按照对称性，我们可以取如下<span class="math inline">\(\alpha(i,j),\alpha(j,i)\)</span>使得上式成立</p>
+<p><span class="math display">\[\alpha(i,j)=p(j)q(j\rightarrow i), ~ \alpha(j,i)=p(i)q(i\rightarrow j)\]</span></p>
+<p>我们可以理解这个改造过程为在原来的马尔科夫链上，从状态<span class="math inline">\(i\)</span>以概率<span class="math inline">\(q(i\rightarrow j)\)</span>转移到状态<span class="math inline">\(j\)</span>时，以概率<span class="math inline">\(\alpha(i,j)\)</span>接受这个转移。所以新的马尔科夫链<span class="math inline">\(Q^\prime\)</span>的转移概率为<span class="math inline">\(q(i\rightarrow j)\alpha(i,j)\)</span>。 <img src="http://7xjj3m.com1.z0.glb.clouddn.com/20150607_MCMC_1.png" alt=""></p>
+<p>上面的改造还有一个小小的问题：马尔科夫链的接受率<span class="math inline">\(\alpha(i,j)\)</span>在转移过程中可能会偏小，如果这样子采样过程中马尔科夫链容易原地踏步，拒绝大量跳转，致使收敛速度太慢。为了提高采样的接受率，我们可以对接受率进行细微的修改：<span class="math display">\[\alpha(i,j)=\min \left \{ \frac{p(j)q(j\rightarrow i) }{p(i)q(i\rightarrow j )}, 1 \right \}.\]</span></p>
 <blockquote>
-<p>Metropolis-Hastings采样算法</p>
-<ol>
-<li>初始化马尔科夫链初始状态$X_0=x_0$</li>
-<li>对t=0,1,2…,循环以下过程进行采样<ul>
-<li>第t时刻马尔科夫链状态$X_t=x_t$，采样$y\sim q(x|x_t)$</li>
-<li>从均匀分布中采样$u\sim Uniform(0,1)$</li>
-<li>如果$u\lt \alpha(x_t,y)$则接受转移$x_t \rightarrow y$，即$X_{t+1} = y$</li>
-<li>否则不接受转移，即$X_{t+1}=x_t$</li>
-</ul>
-</li>
+<h5 id="metropolis-hastings采样算法">Metropolis-Hastings采样算法</h5>
+<ol style="list-style-type: decimal">
+<li>初始化马尔科夫链初始状态<span class="math inline">\(X_0=x_0\)</span></li>
+<li>对t=0,1,2…,循环以下过程进行采样
+<ul>
+<li>第t时刻马尔科夫链状态<span class="math inline">\(X_t=x_t\)</span>，采样<span class="math inline">\(y\sim q(x|x_t)\)</span></li>
+<li>从均匀分布中采样<span class="math inline">\(u\sim Uniform(0,1)\)</span></li>
+<li>如果<span class="math inline">\(u\lt \alpha(x_t,y)\)</span>则接受转移<span class="math inline">\(x_t \rightarrow y\)</span>，即<span class="math inline">\(X_{t+1} = y\)</span></li>
+<li>否则不接受转移，即<span class="math inline">\(X_{t+1}=x_t\)</span></li>
+</ul></li>
 </ol>
 </blockquote>
-<h4 id="Gibbs_Sampling">Gibbs Sampling</h4><p>上述的Metropolis-Hasting算法也可以被应用与高维的场景，但是由于接受率的存在，算法的效率仍然较低。Gibbs Sampling，找到了一个接受率为1的转移矩阵。考察二维的情形，假设概率分布为$p(x,y)$。给定$x$坐标相同的两个点$A(x_1,y_1),B(x_1,y_2)$不难发现<br>$$<br>\begin{array}{c}<br>p(x_1,y_1)p(y_2|x_1)=p(x_1)p(y_1|x_1)p(y_2|x_1)\\<br>p(x_1,y_2)p(y_1|x_1)=p(x_1)p(y_2|x_1)p(y_1|x_1)\\<br>p(x_1,y_1)p(y_2|x_1) = p(x_1,y_2)p(y_1|x_1)\\<br>\end{array}<br>$$<br>也就是$p(A)p(y_2|x_1)=p(B)p(y_1|x_1)$。也就是说给定$x=x_1$这条平行于$y$轴的直线，使用分布$p(y|x_1$作为这条直线上任意两点的转移概率，该分布满足细致平稳条件。同样，对于点$A(x_1,y_1),C(x_2,y_1)$我们也可以得到$p(A)p(x_2|y1)=p(C)p(x_1|y_1)$。</p>
-<p><img src="http://7xjj3m.com1.z0.glb.clouddn.com/20150607_Gibbs_1.png" alt="img"></p>
-<p>构造如下转移矩阵<br>$$<br>\begin{array}{l}<br>Q(A\rightarrow B) = p(y_B|x_1)\\<br>Q(A\rightarrow C) = p(x_C|y_1)\\<br>Q(A\rightarrow D) = 0<br>\end{array}<br>$$<br>显然上面的转移矩阵$Q$满足细致平稳条件。于是这个二维的马尔科夫链将会收敛到平稳分布$p(x,y)$。这个算法被称为Gibbs Sampling，是由德国物理学家Gibbs首先提出的。<br>二维的算法很容易扩展到$n$维空间。对于$n$维空间的概率分布$p(x_1,x_2,…,x_n)$的转移矩阵如下：</p>
-<ol>
-<li>对于当前状态$(x_1,x_2,…,x_n)$，马尔科夫链只能沿着坐标轴转移。比如，但状态沿着$x_i$转移时，其马尔科夫链转移概率为$p(x_i|x_1,…,x_{i-1},x_{i+1},…,x_n)$。</li>
-<li>其它无法沿着坐标轴进行跳转的转移概率均为0。</li>
+<h4 id="gibbs-sampling">Gibbs Sampling</h4>
+<p>上述的Metropolis-Hasting算法也可以被应用与高维的场景，但是由于接受率的存在，算法的效率仍然较低。Gibbs Sampling，找到了一个接受率为1的转移矩阵。考察二维的情形，假设概率分布为<span class="math inline">\(p(x,y)\)</span>。给定<span class="math inline">\(x\)</span>坐标相同的两个点<span class="math inline">\(A(x_1,y_1),B(x_1,y_2)\)</span>不难发现 <span class="math display">\[
+\begin{array}{c}
+p(x_1,y_1)p(y_2|x_1)=p(x_1)p(y_1|x_1)p(y_2|x_1)\\
+p(x_1,y_2)p(y_1|x_1)=p(x_1)p(y_2|x_1)p(y_1|x_1)\\
+p(x_1,y_1)p(y_2|x_1) = p(x_1,y_2)p(y_1|x_1)\\
+\end{array}
+\]</span> 也就是<span class="math inline">\(p(A)p(y_2|x_1)=p(B)p(y_1|x_1)\)</span>。也就是说给定<span class="math inline">\(x=x_1\)</span>这条平行于<span class="math inline">\(y\)</span>轴的直线，使用分布<span class="math inline">\(p(y|x_1\)</span>作为这条直线上任意两点的转移概率，该分布满足细致平稳条件。同样，对于点<span class="math inline">\(A(x_1,y_1),C(x_2,y_1)\)</span>我们也可以得到<span class="math inline">\(p(A)p(x_2|y1)=p(C)p(x_1|y_1)\)</span>。</p>
+<div class="figure">
+<img src="http://7xjj3m.com1.z0.glb.clouddn.com/20150607_Gibbs_1.png" alt="">
+
+</div>
+<p>构造如下转移矩阵 <span class="math display">\[
+\begin{array}{l}
+Q(A\rightarrow B) = p(y_B|x_1)\\
+Q(A\rightarrow C) = p(x_C|y_1)\\
+Q(A\rightarrow D) = 0
+\end{array}
+\]</span> 显然上面的转移矩阵<span class="math inline">\(Q\)</span>满足细致平稳条件。于是这个二维的马尔科夫链将会收敛到平稳分布<span class="math inline">\(p(x,y)\)</span>。这个算法被称为Gibbs Sampling，是由德国物理学家Gibbs首先提出的。 二维的算法很容易扩展到<span class="math inline">\(n\)</span>维空间。对于<span class="math inline">\(n\)</span>维空间的概率分布<span class="math inline">\(p(x_1,x_2,...,x_n)\)</span>的转移矩阵如下：</p>
+<ol style="list-style-type: decimal">
+<li><p>对于当前状态<span class="math inline">\((x_1,x_2,...,x_n)\)</span>，马尔科夫链只能沿着坐标轴转移。比如，但状态沿着<span class="math inline">\(x_i\)</span>转移时，其马尔科夫链转移概率为<span class="math inline">\(p(x_i|x_1,...,x_{i-1},x_{i+1},...,x_n)\)</span>。</p></li>
+<li><p>其它无法沿着坐标轴进行跳转的转移概率均为0。</p></li>
 </ol>
 <blockquote>
-<p>n维Gibbs Sampling算法</p>
-<ol>
-<li>随机选取一个初始状态$(x_1,x_2,…,x_n)$</li>
-<li>对t=0,1,2… 循环采样：<ul>
-<li>$x_1^{(t+1)}\sim p(x_1|x_2^{(t)},x_3^{(t)},…,x_n^{(t)})$</li>
-<li>$x_2^{(t+1)}\sim p(x_2|x_1^{(t+1)},x_3^{(t)},…,x_n^{(t)})$</li>
+<h5 id="n维gibbs-sampling算法">n维Gibbs Sampling算法</h5>
+<ol style="list-style-type: decimal">
+<li>随机选取一个初始状态<span class="math inline">\((x_1,x_2,...,x_n)\)</span></li>
+<li>对t=0,1,2… 循环采样：
+<ul>
+<li><span class="math inline">\(x_1^{(t+1)}\sim p(x_1|x_2^{(t)},x_3^{(t)},...,x_n^{(t)})\)</span></li>
+<li><span class="math inline">\(x_2^{(t+1)}\sim p(x_2|x_1^{(t+1)},x_3^{(t)},...,x_n^{(t)})\)</span></li>
 <li>…</li>
-<li>$x_j^{(t+1)}\sim p(x_j|x_1^{(t+1)},x_2^{(t+1)},…,x_{j-1}^{(t+1)},x_{j+1}^{(t)},…,x_n^{(t)})$</li>
+<li><span class="math inline">\(x_j^{(t+1)}\sim p(x_j|x_1^{(t+1)},x_2^{(t+1)},...,x_{j-1}^{(t+1)},x_{j+1}^{(t)},...,x_n^{(t)})\)</span></li>
 <li>…</li>
-<li>$x_n^{(t+1)}\sim p(x_n|x_1^{(t+1)},x_2^{(t+1)},…,x_{n-1}^{(t+1)})$</li>
-</ul>
-</li>
+<li><span class="math inline">\(x_n^{(t+1)}\sim p(x_n|x_1^{(t+1)},x_2^{(t+1)},...,x_{n-1}^{(t+1)})\)</span></li>
+</ul></li>
 </ol>
 </blockquote>
 
@@ -234,6 +278,8 @@
       
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/06/22/spark-cluster-mode-overview/">Spark集群模式概述</a>
             
           </div>
 
@@ -303,21 +349,21 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
@@ -357,7 +403,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机模拟"><span class="nav-number">1.</span> <span class="nav-text">随机模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#马尔科夫链及其平稳分布"><span class="nav-number">1.1.</span> <span class="nav-text">马尔科夫链及其平稳分布</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#_收敛到平稳分布_"><span class="nav-number">1.1.1.</span> <span class="nav-text">_收敛到平稳分布_</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#_MCMC_"><span class="nav-number">1.1.2.</span> <span class="nav-text">_MCMC_</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gibbs_Sampling"><span class="nav-number">1.2.</span> <span class="nav-text">Gibbs Sampling</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机模拟"><span class="nav-number">1.</span> <span class="nav-text">随机模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#马尔科夫链及其平稳分布"><span class="nav-number">1.1.</span> <span class="nav-text">马尔科夫链及其平稳分布</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#收敛到平稳分布"><span class="nav-number">1.1.1.</span> <span class="nav-text">收敛到平稳分布</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#mcmc"><span class="nav-number">1.1.2.</span> <span class="nav-text">MCMC</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#metropolis-hastings采样算法"><span class="nav-number">1.1.3.</span> <span class="nav-text">Metropolis-Hastings采样算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#gibbs-sampling"><span class="nav-number">1.2.</span> <span class="nav-text">Gibbs Sampling</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#n维gibbs-sampling算法"><span class="nav-number">1.2.1.</span> <span class="nav-text">n维Gibbs Sampling算法</span></a></li></ol></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>

@@ -126,6 +126,170 @@
           
           
             
+              <a class="post-title-link" href="/2015/06/23/test/">
+                未命名
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-06-23
+        </span>
+
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/06/23/test/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/23/test/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <ol style="list-style-type: decimal">
+<li>first</li>
+<li>second
+<ul>
+<li>inner first</li>
+<li>inner second</li>
+</ul></li>
+</ol>
+
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
+              <a class="post-title-link" href="/2015/06/22/spark-cluster-mode-overview/">
+                Spark集群模式概述
+              </a>
+            
+          
+        </h1>
+      
+
+      <div class="post-meta">
+        <span class="post-time">
+          发表于 2015-06-22
+        </span>
+
+        
+          <span class="post-category">
+            &nbsp; | &nbsp; 分类于
+            
+              <a href="/categories/spark/">spark</a>
+
+              
+              
+
+            
+          </span>
+        
+
+        
+          
+            <span class="post-comments-count">
+            &nbsp; | &nbsp;
+            <a href="/2015/06/22/spark-cluster-mode-overview/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/22/spark-cluster-mode-overview/"></span>
+            </a>
+          </span>
+          
+        
+      </div>
+    </div>
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>作者：foreyou</p>
+<p>出处：<a href="http://www.foreyou.net/2015/06/22/spark-cluster-mode-overview/" class="uri">http://www.foreyou.net/2015/06/22/spark-cluster-mode-overview/</a></p>
+<p>声明：本文采用以下协议进行授权： <a href="https://creativecommons.org/licenses/by-nc/3.0/cn/deed.zh">署名-非商用|CC BY-NC 3.0 CN</a> ，转载请注明作者及出处。</p>
+<hr />
+<p>本篇文章作为理解Spark框架的入门文章，对<a href="http://spark.apache.org/docs/latest/cluster-overview.html">《Spark Cluster Mode Overview》</a>的翻译。
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2015/06/22/spark-cluster-mode-overview/#more">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spark/"> #spark </a>
+          
+        </div>
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </div>
+  </div>
+
+
+    
+      
+
+  <div class="post post-type-normal ">
+    <div class="post-header">
+
+      
+      
+        <h1 class="post-title">
+          
+          
+            
               <a class="post-title-link" href="/2015/06/07/how-to-do-gibbs-sampling/">
                 如何做Gibbs采样(how to do gibbs-sampling)
               </a>
@@ -172,7 +336,10 @@
 
       
         
-          <h3 id="随机模拟">随机模拟</h3><p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。<br>　　随机模拟的一个重要问题就是给定一个概率分布$p(x)$，如何生成它的样本。均匀分布$Uniform(0,1)$的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于$Uniform(0,1)$的样本经过变换生成。<br>　　然而，当概率分布$p(x)$的形式很复杂或者$p(x)$是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。<br>
+          <h3 id="随机模拟">随机模拟</h3>
+<p>　　随机模拟（或者统计模拟）方法最早有数学家乌拉姆提出，又称做蒙特卡洛方法。蒙特卡洛是一个著名的赌场，赌博总是和统计有着密切的关系，所以这个命名风趣而贴切，被广为接受。</p>
+<p>　　随机模拟的一个重要问题就是给定一个概率分布<span class="math inline">\(p(x)\)</span>，如何生成它的样本。均匀分布<span class="math inline">\(Uniform(0,1)\)</span>的样本可以通过线性同余发生器生成的伪随机数来模拟。常见的概率分布，无论是离散的还是连续的分布，都可以基于<span class="math inline">\(Uniform(0,1)\)</span>的样本经过变换生成。</p>
+<p>　　然而，当概率分布<span class="math inline">\(p(x)\)</span>的形式很复杂或者<span class="math inline">\(p(x)\)</span>是个高维分布的时候，样本的生成就会变得困难。此时就需要一些更加复杂的随机模拟方法来生成样本。接下来将会介绍下MCMC(Markov Chain Monte Carlo)和Gibbs Sampling算法。</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/06/07/how-to-do-gibbs-sampling/#more">
               阅读全文 &raquo;
@@ -264,10 +431,13 @@
       
         
           <p>上一篇文章<a href="/2015/05/27/SVM之SMO算法笔记（之一）">《SVM之SMO算法笔记（之一）》</a>介绍了SMO算法的原理，本篇文章将要介绍算法的具体步骤。</p>
-<h2 id="SMO算法的步骤">SMO算法的步骤</h2><p>我们已经知道SMO算法在每个迭代中都要选择一对$\alpha_1$和$\alpha_2$进行优化更新，可以描述为如下两个步骤：</p>
-<ol>
-<li>采用启发式的方法选择一对$\alpha_1$和$\alpha_2$，使得本次优化最大程度接近全局最优值。<br>(1)寻找第一个违反KKT条件的$\alpha_1$。<br>(2)在non-bound子集中选取使得$|E_1-E_2|$最大的$\alpha_2$。</li>
-<li>固定除了$\alpha_1$和$\alpha_2$之外的其他参数，对目标函数最优化求参数。</li>
+<h2 id="smo算法的步骤">SMO算法的步骤</h2>
+<p>我们已经知道SMO算法在每个迭代中都要选择一对<span class="math inline">\(\alpha_1\)</span>和<span class="math inline">\(\alpha_2\)</span>进行优化更新，可以描述为如下两个步骤：</p>
+<ol style="list-style-type: decimal">
+<li><p>采用启发式的方法选择一对<span class="math inline">\(\alpha_1\)</span>和<span class="math inline">\(\alpha_2\)</span>，使得本次优化最大程度接近全局最优值。</p>
+<p>(1)寻找第一个违反KKT条件的<span class="math inline">\(\alpha_1\)</span>。</p>
+<p>(2)在non-bound子集中选取使得<span class="math inline">\(|E_1-E_2|\)</span>最大的<span class="math inline">\(\alpha_2\)</span>。</p></li>
+<li><p>固定除了<span class="math inline">\(\alpha_1\)</span>和<span class="math inline">\(\alpha_2\)</span>之外的其他参数，对目标函数最优化求参数。</p></li>
 </ol>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/05/27/SVM之SMO算法笔记（之二）/#more">
@@ -355,7 +525,8 @@
 
       
         
-          <p>参考《支持向量机通俗导论》<br>关于SVM的原理和理论推导可以查阅July的博客<a href="http://blog.csdn.net/v_july_v/article/details/7624837">《支持向量机同属导论》</a>。这篇博客关注SVM的实现。<br>
+          <p>参考《支持向量机通俗导论》</p>
+<p>关于SVM的原理和理论推导可以查阅July的博客<a href="http://blog.csdn.net/v_july_v/article/details/7624837">《支持向量机同属导论》</a>。这篇博客关注SVM的实现。</p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/05/27/SVM之SMO算法笔记（之一）/#more">
               阅读全文 &raquo;
@@ -419,21 +590,21 @@
         <div class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
 
           <div class="site-state-item site-state-categories">
             <a href="/categories">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">分类</span>
               </a>
           </div>
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>
