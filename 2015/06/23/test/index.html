@@ -23,7 +23,7 @@
 
 
 
-  <meta name="keywords" content="spark," />
+  <meta name="keywords" content="Hexo,next" />
 
 
 
@@ -44,7 +44,7 @@
   </script>
 
 
-  <title> Spark集群模式概述 // foreyou's notes </title>
+  <title>  // foreyou's notes </title>
 </head>
 
 <body>
@@ -124,7 +124,7 @@
           
           
             
-              Spark集群模式概述
+              
             
           
         </h1>
@@ -132,28 +132,17 @@
 
       <div class="post-meta">
         <span class="post-time">
-          发表于 2015-06-22
+          发表于 2015-06-23
         </span>
 
-        
-          <span class="post-category">
-            &nbsp; | &nbsp; 分类于
-            
-              <a href="/categories/spark/">spark</a>
-
-              
-              
-
-            
-          </span>
         
 
         
           
             <span class="post-comments-count">
             &nbsp; | &nbsp;
-            <a href="/2015/06/22/spark-cluster-mode-overview/#comments" >
-              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/22/spark-cluster-mode-overview/"></span>
+            <a href="/2015/06/23/test/#comments" >
+              <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2015/06/23/test/"></span>
             </a>
           </span>
           
@@ -167,115 +156,55 @@
       
 
       
-        <p>作者：foreyou</p>
-<p>出处：<a href="http://www.foreyou.net/2015/06/22/spark-cluster-mode-overview/" class="uri" target="_blank" rel="external">http://www.foreyou.net/2015/06/22/spark-cluster-mode-overview/</a></p>
-<p>声明：本文采用以下协议进行授权： <a href="https://creativecommons.org/licenses/by-nc/3.0/cn/deed.zh" target="_blank" rel="external">署名-非商用|CC BY-NC 3.0 CN</a> ，转载请注明作者及出处。</p>
-<hr>
-<p>本篇文章作为理解Spark框架的入门文章，对<a href="http://spark.apache.org/docs/latest/cluster-overview.html" target="_blank" rel="external">《Spark Cluster Mode Overview》</a>的翻译。 <a id="more"></a></p>
-<h1 id="集群模式概述">集群模式概述</h1>
-<p>为了便于理解<code>Spark</code>框架的组件，这篇文章对<code>Spark</code>是如何运行在集群上做了概述。如果想要知道如何提交应用程序给<code>Spark</code>集群可以通读<a href="http://spark.apache.org/docs/latest/submitting-applications.html" target="_blank" rel="external">《application submission guide》</a>。</p>
-<h1 id="组件">组件</h1>
-<p><code>Spark</code>应用程序以一组独立的进程的运行在集群上，由在主程序（称之为<code>DriverProgram</code>）中的<code>SparkContext</code>对象来协调这些进程。<code>SparkContext</code>可以连接到多种跨应用程序的资源分配集群管理器（比如，<code>Spark</code>自己的<code>Standalone</code>和<code>Mesos/Yarn</code>等），以运行<code>Spark</code>集群。一旦连接到集群，<code>Spark</code>便能获得了集群内部节点上的<code>Executor</code>。每个<code>Executor</code>都是集群节点上的一个为应用程序提供计算和数据存储的进程。然后，<code>SparkContext</code>会将代码发送给<code>Executor</code>。最后，<code>SparkContext</code>会把任务发给<code>Executor</code>执行。</p>
-<div class="figure">
-<img src="http://spark.apache.org/docs/latest/img/cluster-overview.png" alt="">
-
-</div>
-<p>关于这个架构，有几个值得注意的细节：</p>
-<ol style="list-style-type: decimal">
-<li><p>每个应用程序都会得到属于自己的一组<code>Executor</code>进程，这些进程伴随在应用程序的整个生命周期内，会一直以多线程的方式执行任务。这得益于应用程序彼此之间在调度和执行两端的都是分离的，因为每个<code>driver program</code>都只会调度自己应用程序的任务，同时不同应用程序的任务都会运行在不同的<code>JVM</code>中。这也意味着，除非将数据写到外部存储，否则<code>Spark</code>应用程序（<code>SparkContext</code>实例）之间没法共享数据。</p></li>
-<li><p><code>Spark</code>对于底层的集群管理器是不可见的。只要获得<code>Executor</code>并让他们之间能够彼此通信，在集群管理器（例如，<code>Mesos/Yarn</code>）上运行<code>Spark</code>应用程序就会变得相对容易，这些集群管理器还可以运行其他类型的应用程序。</p></li>
-<li><p>在<code>Driver program</code>的整个生命周期内，它都要接听和接受来自<code>Executor</code>的连接请求（详见<a href="http://spark.apache.org/docs/latest/configuration.html#networking" target="_blank" rel="external">spark.driver.port and spark.fileserver.port in the network config section</a>)。这样<code>Driver program</code>必须是从工作节点网络可寻址的。</p></li>
-<li><p>因为<code>Driver program</code>是用来调度任务在集群上执行的，所以它运行的节点应该尽量靠近工作节点，最好是同一个局域网。如果你想远程发送请求到集群，最好开一个RPC到<code>driver</code>，并把它提交到一个靠近集群的<code>driver</code>而不是一个远离工作节点的<code>driver</code>。</p></li>
-</ol>
-<h1 id="集群管理器类型">集群管理器类型</h1>
-<p><code>Spark</code>系统目前支持三种类型的集群管理器：</p>
-<ul>
-<li><p><a href="http://spark.apache.org/docs/latest/spark-standalone.html" target="_blank" rel="external"><code>Standalone</code></a> - <code>Spark</code>框架提供的便于其创建集群的一种集群管理器。</p></li>
-<li><p><a href="http://spark.apache.org/docs/latest/running-on-mesos.html" target="_blank" rel="external"><code>Apache Mesos</code></a> - 一个也可以运行<code>Hadoop</code> <code>MapReduce</code>和服务程序的通用集群管理器。</p></li>
-<li><p><a href="http://spark.apache.org/docs/latest/running-on-yarn.html" target="_blank" rel="external"><code>Hadoop YARN</code></a> - <code>Hadoop 2</code>的资源管理器。</p></li>
-</ul>
-<p>除此之外，<code>Spark</code>还提供了<a href="http://spark.apache.org/docs/latest/ec2-scripts.html" target="_blank" rel="external"><code>EC2 launch scripts</code></a>便于其在<code>Amazon EC2</code>之上建立<code>Standalone</code>集群。</p>
-<h1 id="提交应用程序">提交应用程序</h1>
-<p>应用程序可以使用<code>spark-submit</code>脚本提交到集群上去运行。<a href="http://spark.apache.org/docs/latest/submitting-applications.html" target="_blank" rel="external">《application submission guide》</a>介绍了详细步骤。</p>
-<h1 id="监控monitoring">监控(Monitoring)</h1>
-<p>每个<code>Driver program</code>都有一个对应的网络UI，应用程序端口为4040，用于显示有关正在运行的任务，<code>Executor</code>，以及存储使用情况的信息。在浏览器内通过<code>http://&lt;driver-node&gt;:4040</code>链接访问此网络UI。<a href="http://spark.apache.org/docs/latest/monitoring.html" target="_blank" rel="external">《monitoring guide 》</a>还介绍了其他监控选项。</p>
-<h1 id="作业调度job-scheduling">作业调度(Job Scheduling)</h1>
-<p><code>Spark</code>框架下，既有跨应用程序的资源分配（集群管理器级别），也有应用程序内资源分配（如果在同一个SparkContext上发生了多个计算）。详见<a href="http://spark.apache.org/docs/latest/job-scheduling.html" target="_blank" rel="external">《job scheduling overview》</a>。</p>
-<h1 id="术语glossary">术语(Glossary)</h1>
-下表汇总了<code>Spark</code>框架下的概念术语:
-<table class="table table-bordered table-striped table-condensed">
-<tr>
-<th width="20%">
-术语
-</th>
-<th>
-意思
-</th>
+        <h1 id="手动启动集群">手动启动集群</h1>
+<p>可以通过执行下面命令，来启动<code>Standalone master</code>服务器:</p>
+<pre><code>./sbin/start-master.sh</code></pre>
+<p>一旦启动，<code>master</code>会为自己打印一个<code>spark://HOST:port</code>URL。我们可以使用这个URL来将<code>worker</code>节点连接到<code>master</code>，或者作为<code>SparkContext</code>的<code>master</code>参数。也可以通过访问Web UI（默认地址<code>http://localhost:8080</code>），来获取这个URL。</p>
+<p>类似的我们可以通过如下命令来启动一个或多个工作节点:</p>
+<pre><code>./sbin/start-slave.sh &lt;worker#&gt; &lt;master-spark-URL&gt;</code></pre>
+<p>一旦启动了一个<code>worker</code>节点，我们便可以在<code>master</code>的Web UI上发现这个节点的信息，包括CPU数量和内存（减除1GB给OS）。</p>
+<p>最后，可以我们可以将一下配置选项传给<code>master</code>和<code>worker</code>：</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">争论</th>
+<th align="left">意思</th>
 </tr>
-<tr>
-<td>
-<code>Application</code>
-</td>
-<td>
-在<code>Spark</code>上构建的程序，由<code>Driver program</code>和集群上的<code>Executor</code>组成
-</td>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">-h HOST, --host HOST</td>
+<td align="left">监听的主机地址</td>
 </tr>
-<tr>
-<td>
-<code>Driver program</code>
-</td>
-<td>
-运行<code>main()</code>函数和创建<code>SparkContext</code>的进程
-</td>
+<tr class="even">
+<td align="left">-i HOST, --ip HOST</td>
+<td align="left">监听的主机地址（弃用，使用-h或--host）</td>
 </tr>
-<tr>
-<td>
-<code>Cluster manager</code>
-</td>
-<td>
-用于获取集群上资源的外部服务（例如，<code>Standalone</code>，<code>Mesos</code>，<code>YARN</code>）
-</td>
+<tr class="odd">
+<td align="left">-p PORT, --port HOST</td>
+<td align="left">服务监听的端口（master默认为7077，worker随机）</td>
 </tr>
-<tr>
-<td>
-<code>Worker node</code>
-</td>
-<td>
-集群中任意可以运行应用的节点
-</td>
+<tr class="even">
+<td align="left">--webui-port PORT</td>
+<td align="left">Web UI的端口（master默认为8080，worker默认为8081）</td>
 </tr>
-<tr>
-<td>
-<code>Executor</code>
-</td>
-<td>
-在工作员节点上为应用所启动的一个进程，可以运行任务以及可以在内存或是硬盘中保存数据。每一个应用都有属于自己的一组<code>Executor</code>
-</td>
+<tr class="odd">
+<td align="left">-c CORES, --cores CORES</td>
+<td align="left">在一台机器上允许Spark应用使用CPU核总数，默认都可用；只针对worder节点</td>
 </tr>
-<tr>
-<td>
-<code>Task</code>
-</td>
-<td>
-一个可以被发送给<code>Executor</code>的工作单元
-</td>
+<tr class="even">
+<td align="left">-m MEM, --memory MEM</td>
+<td align="left">在一台机器上运行Spark应用使用的内存总数（默认是机器的内存总量减去1GB）；只针对workder节点</td>
 </tr>
-<tr>
-<td>
-<code>Job</code>
-</td>
-<td>
-一个用于响应<code>Spark action</code>（例如，<code>save</code>，<code>collect</code>）的多任务组成的并行计算；你可以在驱动日志中看到这个术语
-</td>
+<tr class="odd">
+<td align="left">-d DIR, --work-dir DIR</td>
+<td align="left">用于作为暂存空间和日志输出的目录（默认为SPARK_HOME/work）；只针对worker节点</td>
 </tr>
-<tr>
-<td>
-<code>Stage</code>
-</td>
-<td>
-每个工作被分为较小相互依赖的<code>Task</code>集合称为<code>Stage</code> （和<code>MapReduce</code>中的<code>map</code>和<code>reduce</code>阶段相似）； 你可以在驱动日志中看到这个术语
-</td>
+<tr class="even">
+<td align="left">--properties-file FILE</td>
+<td align="left">用于自定义Spark属性的文件路径（默认为conf/spark_defaults.conf）</td>
 </tr>
+</tbody>
 </table>
 
       
@@ -283,24 +212,16 @@
 
     <div class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/spark/"> #spark </a>
-          
-        </div>
-      
 
       
         <div class="post-nav">
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2015/06/23/test/"></a>
-            
           </div>
 
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2015/06/07/how-to-do-gibbs-sampling/">如何做Gibbs采样(how to do gibbs-sampling)</a>
+              <a href="/2015/06/22/spark-cluster-mode-overview/">Spark集群模式概述</a>
             
           </div>
         </div>
@@ -418,7 +339,7 @@
           <div class="post-toc">
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#集群模式概述"><span class="nav-number">1.</span> <span class="nav-text">集群模式概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#组件"><span class="nav-number">2.</span> <span class="nav-text">组件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#集群管理器类型"><span class="nav-number">3.</span> <span class="nav-text">集群管理器类型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提交应用程序"><span class="nav-number">4.</span> <span class="nav-text">提交应用程序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#监控monitoring"><span class="nav-number">5.</span> <span class="nav-text">监控(Monitoring)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#作业调度job-scheduling"><span class="nav-number">6.</span> <span class="nav-text">作业调度(Job Scheduling)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#术语glossary"><span class="nav-number">7.</span> <span class="nav-text">术语(Glossary)</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#手动启动集群"><span class="nav-number">1.</span> <span class="nav-text">手动启动集群</span></a></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator"></div>
@@ -1023,9 +944,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'fortianyou';
-      var disqus_identifier = '2015/06/22/spark-cluster-mode-overview/';
-      var disqus_title = 'Spark集群模式概述';
-      var disqus_url = 'http://www.foreyou.net/2015/06/22/spark-cluster-mode-overview/';
+      var disqus_identifier = '2015/06/23/test/';
+      var disqus_title = '';
+      var disqus_url = 'http://www.foreyou.net/2015/06/23/test/';
 
       (function(){
         var dsq = document.createElement('script');
